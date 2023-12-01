@@ -154,12 +154,12 @@ export const register = asyncHandler(async (req, res) => {
 			accesstoken: accesstoken,
 		});
 
-		// send activation code 
-		const me =  await account_activation_email(
-			{ name: user.name, email: user.email },
+		// send activation code
+		const me = await account_activation_email(
+			{ name: user.name, code: accesstoken },
 			user.email
 		);
-console.log( me);
+		console.log(me);
 		res.status(200).json({
 			user,
 			message: "User Created successful",
