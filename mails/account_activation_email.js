@@ -5,19 +5,18 @@ export const account_activation_email = async (data, email) => {
 		host: "smtp.gmail.com",
 		port: 587,
 		auth: {
-			user: "mdmahir.ds@gmail.com",
-			pass: "xiflnjtclrumtyok",
+			user: process.env.GOOGLE_AUTH_USER,
+			pass: process.env.GOOGLE_AUTH_PASS,
 		},
 	});
 
 	await transport.sendMail({
-		from: "Mail Test <bkdkf@gmail.com>",
+		from: `Messenger App <${process.env.GOOGLE_AUTH_USER}>`,
 		subject: "Account Activation Email",
 		to: email,
-		text: "Hello world?",
 		html: `
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html
+	<html
 	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:v="urn:schemas-microsoft-com:vml"
 	xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -484,7 +483,7 @@ export const account_activation_email = async (data, email) => {
 																				activation
 																				code
 																				is:
-																				${data.code}</strong
+																				${data.otp}</strong
 																			></span
 																		>
 																	</p>
@@ -559,14 +558,16 @@ export const account_activation_email = async (data, email) => {
 																				line-height: 120%;
 																			"
 																			><strong
-																				><span
+																				>
+																			<a href=${data.link}>	<span
 																					style="
 																						font-size: 14px;
 																						line-height: 16.8px;
 																					"
 																					>Activate
 																					now</span
-																				></strong
+																				></a>
+																				</strong
 																			></span
 																		>
 																	</a>

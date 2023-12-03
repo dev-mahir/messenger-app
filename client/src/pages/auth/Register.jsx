@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.scss";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +11,8 @@ import { createToast } from "../../utils/toast";
 
 function Register({ title }) {
 	const dispatch = useDispatch();
-	const { message, error } = useSelector(getAuthData);
+	const navigate = useNavigate();
+	const { message, error, loader } = useSelector(getAuthData);
 	const { input, handleInputChange, resetForm, setInput } = useFormFields({
 		name: "",
 		auth: "",
@@ -27,6 +28,8 @@ function Register({ title }) {
 		if (message) {
 			createToast(message, "success");
 			dispatch(setMessageEmpty());
+			resetForm();
+			navigate('/activation')
 		}
 		if (error) {
 			createToast(error);
@@ -69,7 +72,11 @@ function Register({ title }) {
 									name="password"
 									onChange={handleInputChange}
 								/>
-								<button className="bg-fb">Create now</button>
+								<button
+									className="bg-fb"
+									disabled={loader ? true : false}>
+									{loader ? "Creating...." : "Create now"}
+								</button>
 							</form>
 						</div>
 					</div>

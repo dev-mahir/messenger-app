@@ -22,8 +22,7 @@ app.use(
   })
 );
 
-// set environment vars
-const PORT = process.env.PORT || 9090;
+
 
 // static folder
 app.use(express.static("public"));
@@ -33,6 +32,10 @@ app.use("/api/v1/auth", authRouter);
 
 // use error handler
 app.use(errorHandler);
+
+
+// set environment vars
+const PORT = process.env.PORT || 9090;
 
 // app listen
 app.listen(PORT, () => {

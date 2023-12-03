@@ -11,6 +11,7 @@ const useFormFields = (initState) => {
 		}));
 	};
 
+	
 	// reset handler
 	const resetForm = () => {
 		setInput(initState);

@@ -2,7 +2,14 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
-import { createOTP, isEmail, isMobile } from "../helpers/helpers.js";
+import {
+	createOTP,
+	create_jwt_token,
+	dotsToHyphens,
+	hyphensToDots,
+	isEmail,
+	isMobile,
+} from "../helpers/helpers.js";
 import { sendSMS } from "../utils/sendSMS.js";
 import { account_activation_email } from "../mails/account_activation_email.js";
 
@@ -50,7 +57,7 @@ export const login = asyncHandler(async (req, res) => {
 		}
 	);
 
-	res.cookie("accessToken", token, {
+	res.cookie("access_token", token, {
 		httpOnly: true,
 		secure: process.env.APP_ENV == "Development" ? false : true,
 		sameSite: "strict",
@@ -72,7 +79,7 @@ export const login = asyncHandler(async (req, res) => {
  * @access public
  */
 export const logout = asyncHandler(async (req, res) => {
-	res.clearCookie("accessToken");
+	res.clearCookie("access_token");
 	res.status(200).json({ message: "Logout successful" });
 });
 
@@ -90,10 +97,19 @@ export const register = asyncHandler(async (req, res) => {
 	}
 
 	// create access token for account activation
-	const accesstoken = createOTP();
+	const access_token = createOTP();
 
 	// password hash
 	const hashPass = await bcrypt.hash(password, 10);
+
+	// create verification token
+	const verify_token = jwt.sign(
+		{ auth: auth },
+		process.env.ACCESS_TOKEN_SECRET,
+		{
+			expiresIn: "15m",
+		}
+	);
 
 	if (isMobile(auth)) {
 		// check user phone
@@ -107,32 +123,17 @@ export const register = asyncHandler(async (req, res) => {
 			name,
 			phone: auth,
 			password: hashPass,
-			accesstoken: accesstoken,
+			accesstoken: access_token,
 		});
 
 		// send OTP code
 		await sendSMS(
 			auth,
-			`Hello ${user.name}, Your account activation code is ${user.accesstoken}`
-		);
-
-		// create verification token
-		const verify_token = jwt.sign(
-			{ auth: auth, otp: accesstoken },
-			process.env.ACCESS_TOKEN_SECRET,
-			{
-				expiresIn: "15m",
-			}
+			`Hello ${user.name}, Your account activation code is ${user.access_token}`
 		);
 
 		// set verify token
-		res.cookie("verify_token", verify_token, {
-			httpOnly: true,
-			secure: process.env.APP_ENV == "Development" ? false : true,
-			sameSite: "strict",
-			path: "/",
-			maxAge: 15 * 60 * 1000,
-		});
+		res.cookie("verify_token", verify_token);
 
 		res.status(200).json({
 			user,
@@ -151,15 +152,28 @@ export const register = asyncHandler(async (req, res) => {
 			name,
 			email: auth,
 			password: hashPass,
-			accesstoken: accesstoken,
+			accesstoken: access_token,
 		});
 
+		// create verify_token
+		const verify_token = await create_jwt_token(
+			{ email: auth, _id: user._id },
+			process.env.ACCESS_TOKEN_SECRET,
+			"15m"
+		);
+
+		const activation_link = `http://localhost:3000/activation/${dotsToHyphens(
+			verify_token
+		)}`;
+
 		// send activation code
-		const me = await account_activation_email(
-			{ name: user.name, code: accesstoken },
+		await account_activation_email(
+			{ name: user.name, otp: access_token, link: activation_link },
 			user.email
 		);
-		console.log(me);
+		// set verify token
+		res.cookie("verify_token", verify_token);
+
 		res.status(200).json({
 			user,
 			message: "User Created successful",
@@ -192,4 +206,46 @@ export const makeHashPass = asyncHandler(async (req, res) => {
 	// password hash
 	const hashPass = await bcrypt.hash(password, 10);
 	res.status(200).json({ hashPass });
+});
+
+
+
+
+
+/**
+ * @DESC Account activate by OTP
+ */
+export const account_activate_by_otp = asyncHandler(async (req, res) => {
+	const { token } = req.params;
+	const { otp } = req.body;
+
+	if (!token) return res.status(400).json({ message: "Token not found" });
+
+	if (!otp) return res.status(400).json({ message: "OTP not found" });
+
+	const verify_token = hyphensToDots(token);
+
+	// verify token
+	const token_check = jwt.verify(
+		verify_token,
+		process.env.ACCESS_TOKEN_SECRET
+	);
+
+	if (!token_check)
+		return res.status(400).json({ message: "Invalid activation request" });
+
+	const account_activate = await User.findOneAndUpdate(
+		{ _id: token_check._id, accesstoken: otp },
+		{ $set: { accesstoken: null } },
+		{
+			new: true,
+		}
+	);
+	if (account_activate) {
+		return res
+			.status(200)
+			.json({ message: "Account activated successfully" });
+	} else {
+		return res.status(400).json({ message: "Account activate failed" });
+	}
 });

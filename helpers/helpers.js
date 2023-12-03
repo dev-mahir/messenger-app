@@ -1,3 +1,9 @@
+
+import jwt from 'jsonwebtoken'
+
+
+
+
 /**
  * Email Validate
  */
@@ -159,7 +165,7 @@ export const createOTP = (length = 5) => {
  * @returns
  */
 export const create_jwt_token = (data, secret_key, exp) => {
-	const token = jwt.sign(data, process.env.secret_key, {
+	const token = jwt.sign(data, secret_key, {
 		expiresIn: exp,
 	});
 	return token;
