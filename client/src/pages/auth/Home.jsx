@@ -1,10 +1,16 @@
 import { Link } from "react-router-dom";
 import "./Auth.scss";
-import React from "react";
+import React, { useEffect } from "react";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import PageHeader from "../../components/PageHeader/PageHeader";
 
 function Home({ title }) {
+
+
+
+	
+
+
 	return (
 		<>
 			<PageHeader title="Welcome to Messenger" />

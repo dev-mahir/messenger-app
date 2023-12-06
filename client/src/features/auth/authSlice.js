@@ -1,5 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+	ativateAccountByOtp,
+	ativateAccountByURL,
 	createUser,
 	getLoggedInUser,
 	loginUser,
@@ -31,7 +33,8 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(createUser.pending, (state, action) => {
+			// Create user ===============
+			.addCase(createUser.pending, (state) => {
 				state.loader = true;
 			})
 			.addCase(createUser.rejected, (state, action) => {
@@ -42,6 +45,31 @@ const authSlice = createSlice({
 				state.loader = false;
 				state.message = action.payload.message;
 			})
+			// Activate account by OTP ==========
+			.addCase(ativateAccountByOtp.pending, (state) => {
+				state.loader = true;
+			})
+			.addCase(ativateAccountByOtp.rejected, (state, action) => {
+				state.loader = false;
+				state.error = action.error.message;
+			})
+			.addCase(ativateAccountByOtp.fulfilled, (state, action) => {
+				state.loader = false;
+				state.message = action.payload.message;
+			})
+			// Activate account by OTP ==========
+			.addCase(ativateAccountByURL.pending, (state) => {
+				state.loader = true;
+			})
+			.addCase(ativateAccountByURL.rejected, (state, action) => {
+				state.loader = false;
+				state.error = action.error.message;
+			})
+			.addCase(ativateAccountByURL.fulfilled, (state, action) => {
+				state.loader = false;
+				state.message = action.payload.message;
+			})
+			//login 
 			.addCase(loginUser.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
@@ -52,7 +80,9 @@ const authSlice = createSlice({
 					"user",
 					JSON.stringify(action.payload.user)
 				);
+
 			})
+			//logout
 			.addCase(logoutUser.rejected, (state, action) => {
 				state.error = action.error.message;
 			})

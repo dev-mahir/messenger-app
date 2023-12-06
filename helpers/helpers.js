@@ -60,9 +60,10 @@ export const randStr = (length = 12) => {
  */
 export const dotsToHyphens = (inputString) => {
 	// Use the replace method with a regular expression to replace dots with hyphens
-	const stringWithHyphens = inputString.replace(/\./g, "-");
+	const stringWithHyphens = inputString.replace(/\./g, "");
 	return stringWithHyphens;
 };
+
 
 /**
  * Hypens to Dots

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./Auth.scss";
 import React, { useEffect } from "react";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
@@ -6,12 +6,20 @@ import PageHeader from "../../components/PageHeader/PageHeader";
 import Cookie from "js-cookie";
 import useFormFields from "../../hooks/useFormFields";
 import { useDispatch, useSelector } from "react-redux";
-import { ativateAccountByOtp } from "../../features/auth/authApiSlice";
+import {
+	ativateAccountByOtp,
+	ativateAccountByURL,
+} from "../../features/auth/authApiSlice";
+import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
+import { createToast } from "../../utils/toast";
 
 function Activation({ title }) {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	// const {} = useSelector();
+	const { message, error } = useSelector(getAuthData);
+
+	// get token from url
+	const { tokenURL } = useParams();
 
 	const token = Cookie.get("verify_token");
 
@@ -28,7 +36,29 @@ function Activation({ title }) {
 		if (!token) {
 			return navigate("/login");
 		}
-	}, [token, navigate]);
+		if (message) {
+			createToast(message, "success");
+			dispatch(setMessageEmpty());
+			resetForm();
+			navigate("/login");
+		}
+		if (error) {
+			createToast(error);
+			dispatch(setMessageEmpty());
+		}
+	}, [token, navigate, message, error]);
+
+	// useEffect(() => {
+	// 	if (!tokenURL) {
+	// 		return navigate("/login");
+	// 	}
+	// }, [tokenURL, navigate]);
+
+	// useEffect(() => {
+	// 	if (tokenURL) {
+	// 		dispatch(ativateAccountByURL(tokenURL));
+	// 	}
+	// }, [tokenURL, dispatch]);
 
 	return (
 		<>
@@ -51,9 +81,7 @@ function Activation({ title }) {
 									placeholder="Email or Phone number"
 								/>
 
-								<button className="bg-fb">
-									Reset your password
-								</button>
+								<button className="bg-fb">Activate now</button>
 							</form>
 							<a href="#">Resend OTP</a>
 							<a href="#">
