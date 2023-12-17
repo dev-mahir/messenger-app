@@ -38,7 +38,6 @@ export const ativateAccountByOtp = createAsyncThunk(
 	}
 );
 
-
 // user account activation by token URL
 export const ativateAccountByURL = createAsyncThunk(
 	"auth/ativateAccountByURL",
@@ -58,7 +57,6 @@ export const ativateAccountByURL = createAsyncThunk(
 	}
 );
 
-
 // Login user
 export const loginUser = createAsyncThunk("auth/loginUser", async (data) => {
 	try {
@@ -75,8 +73,6 @@ export const loginUser = createAsyncThunk("auth/loginUser", async (data) => {
 		throw new Error(error.response.data.message);
 	}
 });
-
-
 
 // Login user
 export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
@@ -102,6 +98,25 @@ export const getLoggedInUser = createAsyncThunk(
 		try {
 			const response = await axios.get(
 				"http://localhost:5050/api/v1/auth/me",
+				{
+					withCredentials: true,
+				}
+			);
+
+			return response.data;
+		} catch (error) {
+			throw new Error(error.response.data.message);
+		}
+	}
+);
+
+// Send Resend activation code
+export const resendActivation = createAsyncThunk(
+	"auth/resendActivation",
+	async (data) => {
+		try {
+			const response = await axios.get(
+				`http://localhost:5050/api/v1/auth/resend-activation/${data.auth}`,
 				{
 					withCredentials: true,
 				}

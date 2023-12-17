@@ -38,6 +38,7 @@ export const login = asyncHandler(async (req, res) => {
 			message: "Login user must have a mobile or email account",
 		});
 	}
+	console.log(loginUser);
 	if (!loginUser) {
 		return res.status(404).json({
 			message: "Invalid credentials",
@@ -55,7 +56,7 @@ export const login = asyncHandler(async (req, res) => {
 
 		// create access token
 		const token = jwt.sign(
-			{ auth: loginUser.auth },
+			{ auth: loginUser.email || loggedInUser.phone },
 			process.env.ACCESS_TOKEN_SECRET,
 			{
 				expiresIn: process.env.ACCESS_TOKEN_EXPIRE_IN,
@@ -198,7 +199,7 @@ export const register = asyncHandler(async (req, res) => {
  * @access public
  */
 export const loggedInUser = asyncHandler(async (req, res) => {
-	res.status(200).json(req.me);
+	return res.status(200).json(req.me);
 });
 
 /**
@@ -250,7 +251,6 @@ export const account_activate_by_otp = asyncHandler(async (req, res) => {
 			return res.status(400).json({ message: "Auth is undefined" });
 		}
 
-		console.log(activateUser?.accesstoken);
 		if (otp != activateUser?.accesstoken) {
 			return res.status(400).json({ message: "Incorrect OTP" });
 		}
@@ -312,4 +312,61 @@ export const accountActivateByLink = asyncHandler(async (req, res) => {
 	res.clearCookie("verifyToken");
 
 	return res.status(200).json({ message: "User activation successful" });
+});
+
+/**
+ * Resend account activation by otp
+ */
+export const resendAccountActivation = asyncHandler(async (req, res) => {
+	const { auth } = req.params;
+	console.log(auth);
+
+	//create otp
+	const activationCode = createOTP();
+
+	if (isMobile(auth)) {
+		let user = await User.findOne({ phone: auth });
+		user.accessToken = activationCode;
+		user.save();
+
+		// create verify_token
+		const verifyToken = create_jwt_token(
+			{ auth: auth },
+			process.env.ACCESS_TOKEN_SECRET,
+			"15m"
+		);
+		res.cookie("verifyToken", verifyToken);
+
+		// send OTP code
+		await sendSMS(
+			auth,
+			`Hello ${user.name}, Your account activation code is ${user.access_token}`
+		);
+	} else if (isEmail(auth)) {
+		let user = await User.findOne({ email: auth });
+
+		// create verify_token
+		const verifyToken = create_jwt_token(
+			{ auth: auth },
+			process.env.ACCESS_TOKEN_SECRET,
+			"15m"
+		);
+
+		const activation_link = `http://localhost:3000/activation/${dotsToHyphens(
+			verifyToken
+		)}`;
+
+		user.accessToken = activationCode;
+		user.save();
+
+		// send activation code
+		await account_activation_email(
+			{ name: user.name, otp: activationCode, link: activation_link },
+			user.email
+		);
+		res.cookie("verifyToken", verifyToken);
+		res.status(200).json({
+			message: "Verification code send successfully",
+		});
+	}
 });

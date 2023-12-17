@@ -138,3 +138,35 @@ export const timeAgo = (date) => {
 		return `${Math.floor(timeElapsed / YEAR)} years ago`;
 	}
 };
+
+/**
+ * Hide email middle part
+ */
+export const hideMobileMiddle = (phone) => {
+	const firstThreeChar = phone.slice(1, 3);
+	const lastChar = phone.charAt(phone.length - 1);
+
+	const middlePart = phone.slice(1, -1).replace(/./g, "*");
+
+	const hiddenMobile = "0" + firstThreeChar + middlePart + lastChar;
+
+	return hiddenMobile;
+};
+
+/**
+ * Hide email middle part
+ */
+export const hideEmailMiddle = (email) => {
+	// get email main part
+	const emailMainPart = email.split("@")[0];
+	const emailMainLast = email.split("@")[1];
+
+	const firstChar = emailMainPart.charAt(0);
+	const lastChar = emailMainPart.charAt(emailMainPart.length - 1);
+
+	const middlePart = emailMainPart.slice(1, -1).replace(/./g, "*");
+
+	const hiddenEmail = firstChar + middlePart + lastChar + "@" + emailMainLast;
+
+	return hiddenEmail;
+};

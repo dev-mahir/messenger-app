@@ -6,6 +6,7 @@ import {
 	getLoggedInUser,
 	loginUser,
 	logoutUser,
+	resendActivation,
 } from "./authApiSlice";
 
 // create auth slice
@@ -19,6 +20,7 @@ const authSlice = createSlice({
 		error: null,
 		loader: false,
 	},
+
 	reducers: {
 		setMessageEmpty: (state) => {
 			state.message = null;
@@ -69,7 +71,7 @@ const authSlice = createSlice({
 				state.loader = false;
 				state.message = action.payload.message;
 			})
-			//login 
+			//login
 			.addCase(loginUser.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
@@ -80,7 +82,6 @@ const authSlice = createSlice({
 					"user",
 					JSON.stringify(action.payload.user)
 				);
-
 			})
 			//logout
 			.addCase(logoutUser.rejected, (state, action) => {
@@ -91,12 +92,20 @@ const authSlice = createSlice({
 				state.user = null;
 				localStorage.removeItem("user");
 			})
+			// =========== logged in user =================
 			.addCase(getLoggedInUser.rejected, (state, action) => {
 				state.error = action.error.message;
 				state.user = null;
 			})
 			.addCase(getLoggedInUser.fulfilled, (state, action) => {
 				state.user = action.payload;
+			})
+			// =========== resend activation =================
+			.addCase(resendActivation.rejected, (state, action) => {
+				state.error = action.error.message;
+			})
+			.addCase(resendActivation.fulfilled, (state, action) => {
+				state.message = action.payload.message;
 			});
 	},
 });
