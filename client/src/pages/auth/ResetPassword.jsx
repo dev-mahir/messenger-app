@@ -1,86 +1,90 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.scss";
 import React, { useEffect } from "react";
 import AuthHeader from "../../components/AuthHeader/AuthHeader";
 import PageHeader from "../../components/PageHeader/PageHeader";
-import Cookie from "js-cookie";
 import useFormFields from "../../hooks/useFormFields";
-import { useDispatch, useSelector } from "react-redux";
-import {
-	ativateAccountByOtp,
-	ativateAccountByURL,
-} from "../../features/auth/authApiSlice";
-import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
 import { createToast } from "../../utils/toast";
+import { useDispatch, useSelector } from "react-redux";
+import { getAuthData, setMessageEmpty } from "../../features/auth/authSlice";
+import { resetPassword } from "../../features/auth/authApiSlice";
+import Cookies from "js-cookie";
 
-function Activation({ title }) {
+function ResetPassword() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { message, error } = useSelector(getAuthData);
 
-	// get token from url
-	const { tokenURL } = useParams();
-
-	const token = Cookie.get("verifyToken");
+	const token = Cookies.get("verifyToken");
 
 	const { input, resetForm, handleInputChange } = useFormFields({
 		otp: "",
+		password: "",
+		cPassword: "",
 	});
 
-	const handleUserActivate = (e) => {
+	// handle reset password
+	const handleReset = (e) => {
 		e.preventDefault();
-		dispatch(ativateAccountByOtp({ token: token, otp: input.otp }));
+		dispatch(resetPassword({ password: input.password, token, otp: input.otp }));
 	};
 
 	useEffect(() => {
-		if (!token) {
-			return navigate("/login");
-		}
 		if (message) {
 			createToast(message, "success");
 			dispatch(setMessageEmpty());
 			resetForm();
-			navigate("/login");
+			navigate("/reset-password");
 		}
 		if (error) {
 			createToast(error);
 			dispatch(setMessageEmpty());
 		}
-	}, [token, navigate, message, error]);
-
-
+	}, [navigate, message, error]);
 
 	return (
 		<>
-			<PageHeader title="Activate your account" />
+			<PageHeader title="Reset your password" />
 			<div className="auth-container">
 				<div className="auth-wrapper">
 					<div className="auth-top">
 						<AuthHeader
-							title="Activate your account"
+							title="Reset your password"
 							desc="Lorem ipsum dolor sit nam doloremque laudantium."
 						/>
 
 						<div className="auth-form">
-							<form onSubmit={handleUserActivate}>
+							<form onSubmit={handleReset}>
 								<input
-									type="text"
-									name="otp"
+									type="password"
 									value={input.otp}
+									name="otp"
 									onChange={handleInputChange}
 									placeholder="Enter OTP code..."
 								/>
+								<input
+									type="password"
+									value={input.password}
+									name="password"
+									onChange={handleInputChange}
+									placeholder="Enter your new password"
+								/>
+								<input
+									type="password"
+									value={input.cPassword}
+									name="cPassword"
+									onChange={handleInputChange}
+									placeholder="Confirm password"
+								/>
 
-								<button className="bg-fb">Activate now</button>
+								<button className="bg-fb" type="submit">
+									Reset your password
+								</button>
 							</form>
-							<a href="#">Resend OTP</a>
-							<a href="#">
-								Resend Activation Link to md****@gmail.com
-							</a>
 						</div>
 					</div>
 					<div className="auth-bottom">
-						<Link to="/register">Logout</Link>
+						<Link to="/register">Log In Now</Link>
 					</div>
 				</div>
 			</div>
@@ -88,4 +92,4 @@ function Activation({ title }) {
 	);
 }
 
-export default Activation;
+export default ResetPassword;

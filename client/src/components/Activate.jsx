@@ -1,26 +1,37 @@
 import React, { useEffect } from "react";
 import "./Activate.scss";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import useFormFields from "../hooks/useFormFields";
-import useAuthUser from "../hooks/useAuthUser";
-import AuthHeader from "./AuthHeader/AuthHeader";
 import { createToast } from "../utils/toast";
 import { getAuthData, setMessageEmpty } from "../features/auth/authSlice";
 import { hideEmailMiddle, hideMobileMiddle } from "../helpers/helpers";
-import { resendActivation } from "../features/auth/authApiSlice";
+import {
+	ativateAccountByOtp,
+	resendActivation,
+} from "../features/auth/authApiSlice";
+import Cookies from "js-cookie";
+import useAuthUser from "../hooks/useAuthUser";
 
 const Activate = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const { message, error, user } = useSelector(getAuthData);
+	const { user } = useAuthUser();
+	const { message, error } = useSelector(getAuthData);
+
+	const token = Cookies.get("verifyToken");
 
 	const { input, resetForm, handleInputChange } = useFormFields({
 		otp: "",
 	});
 
-	const handleUserActivate = (user) => {};
+	// user activation
+	const handleUserActivate = (e) => {
+		e.preventDefault();
+		dispatch(ativateAccountByOtp({ token: token, otp: input.otp }));
+	};
 
+	// resend activation
 	const handleResendActivation = (e, auth) => {
 		e.preventDefault();
 		dispatch(resendActivation({ auth }));
@@ -31,7 +42,6 @@ const Activate = () => {
 			createToast(message, "success");
 			dispatch(setMessageEmpty());
 			resetForm();
-			navigate("/login");
 		}
 		if (error) {
 			createToast(error);
@@ -53,10 +63,12 @@ const Activate = () => {
 									name="otp"
 									value={input.otp}
 									onChange={handleInputChange}
-									placeholder="Email or Phone number"
+									placeholder="Enter OTP code..."
 								/>
 
-								<button className="bg-fb">Activate now</button>
+								<button type="submit" className="bg-fb">
+									Activate now
+								</button>
 							</form>
 							{user.phone && (
 								<a
@@ -75,7 +87,7 @@ const Activate = () => {
 									onClick={(e) =>
 										handleResendActivation(e, user.email)
 									}>
-									Resend Activation Link to
+									Resend Activation Link to &nbsp;
 									{hideEmailMiddle(user.email)}
 								</a>
 							)}

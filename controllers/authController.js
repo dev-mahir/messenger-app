@@ -38,7 +38,6 @@ export const login = asyncHandler(async (req, res) => {
 			message: "Login user must have a mobile or email account",
 		});
 	}
-	console.log(loginUser);
 	if (!loginUser) {
 		return res.status(404).json({
 			message: "Invalid credentials",
@@ -110,7 +109,7 @@ export const register = asyncHandler(async (req, res) => {
 	const hashPass = await bcrypt.hash(password, 10);
 
 	// create verification token
-	const verify_token = jwt.sign(
+	const verifyToken = jwt.sign(
 		{ auth: auth },
 		process.env.ACCESS_TOKEN_SECRET,
 		{
@@ -140,7 +139,7 @@ export const register = asyncHandler(async (req, res) => {
 		);
 
 		// set verify token
-		res.cookie("verify_token", verify_token);
+		res.cookie("verifyToken", verifyToken);
 
 		res.status(200).json({
 			user,
@@ -162,15 +161,8 @@ export const register = asyncHandler(async (req, res) => {
 			accesstoken: access_token,
 		});
 
-		// create verify_token
-		const verify_token = create_jwt_token(
-			{ email: auth, _id: user._id, accesstoken: access_token },
-			process.env.ACCESS_TOKEN_SECRET,
-			"15m"
-		);
-
 		const activation_link = `http://localhost:3000/activation/${dotsToHyphens(
-			verify_token
+			verifyToken
 		)}`;
 
 		// send activation code
@@ -179,7 +171,7 @@ export const register = asyncHandler(async (req, res) => {
 			user.email
 		);
 		// set verify token
-		res.cookie("verify_token", verify_token);
+		res.cookie("verifyToken", verifyToken);
 
 		res.status(200).json({
 			user,
@@ -243,10 +235,10 @@ export const account_activate_by_otp = asyncHandler(async (req, res) => {
 		// activate account now
 		let activateUser = null;
 
-		if (isMobile(token_check.phone)) {
-			activateUser = await User.findOne({ phone: token_check.phone });
-		} else if (isEmail(token_check.email)) {
-			activateUser = await User.findOne({ email: token_check.email });
+		if (isMobile(token_check.auth)) {
+			activateUser = await User.findOne({ phone: token_check.auth });
+		} else if (isEmail(token_check.auth)) {
+			activateUser = await User.findOne({ email: token_check.auth });
 		} else {
 			return res.status(400).json({ message: "Auth is undefined" });
 		}
@@ -260,11 +252,13 @@ export const account_activate_by_otp = asyncHandler(async (req, res) => {
 		await activateUser.save();
 
 		// clear verify token
-		res.clearCookie("verify_token");
+		res.clearCookie("verifyToken");
 
-		return res.status(200).json({ message: "User activation successful" });
+		return res.status(200).json({
+			message: "User activation successful",
+			user: activateUser,
+		});
 	} catch (error) {
-		console.error(error);
 		return res.status(500).json({ message: "Internal Server Error" });
 	}
 });
@@ -319,14 +313,13 @@ export const accountActivateByLink = asyncHandler(async (req, res) => {
  */
 export const resendAccountActivation = asyncHandler(async (req, res) => {
 	const { auth } = req.params;
-	console.log(auth);
 
 	//create otp
 	const activationCode = createOTP();
 
 	if (isMobile(auth)) {
 		let user = await User.findOne({ phone: auth });
-		user.accessToken = activationCode;
+		user.accesstoken = activationCode;
 		user.save();
 
 		// create verify_token
@@ -352,21 +345,139 @@ export const resendAccountActivation = asyncHandler(async (req, res) => {
 			"15m"
 		);
 
-		const activation_link = `http://localhost:3000/activation/${dotsToHyphens(
+		const activationLink = `http://localhost:3000/activation/${dotsToHyphens(
 			verifyToken
 		)}`;
 
-		user.accessToken = activationCode;
+		// update access token
+		user.accesstoken = activationCode;
 		user.save();
 
-		// send activation code
+		//send activation code
 		await account_activation_email(
-			{ name: user.name, otp: activationCode, link: activation_link },
+			{ name: user.name, otp: activationCode, link: activationLink },
 			user.email
 		);
 		res.cookie("verifyToken", verifyToken);
 		res.status(200).json({
 			message: "Verification code send successfully",
+		});
+	}
+});
+
+/**
+ * Forgot password
+ */
+export const forgotPassword = asyncHandler(async (req, res) => {
+	const { auth } = req.body;
+
+	//create otp
+	const activationCode = createOTP();
+
+	if (isMobile(auth)) {
+		const user = await User.findOne({ phone: auth });
+		if (!user) {
+			res.status(400).json({
+				message: "No user found",
+			});
+		}
+		user.accesstoken = activationCode;
+		user.save();
+
+		// create verify_token
+		const verifyToken = create_jwt_token(
+			{ auth: auth },
+			process.env.ACCESS_TOKEN_SECRET,
+			"15m"
+		);
+		res.cookie("verifyToken", verifyToken);
+
+		// send OTP code
+		await sendSMS(
+			auth,
+			`Hello ${user.name}, Your account activation code is ${user.access_token}`
+		);
+	} else if (isEmail(auth)) {
+		const user = await User.findOne({ email: auth });
+		if (!user) {
+			res.status(400).json({
+				message: "No user found",
+			});
+		}
+		// create verify_token
+		const verifyToken = create_jwt_token(
+			{ auth: auth },
+			process.env.ACCESS_TOKEN_SECRET,
+			"15m"
+		);
+
+		const activationLink = `http://localhost:3000/activation/${dotsToHyphens(
+			verifyToken
+		)}`;
+
+		// update access token
+		user.accesstoken = activationCode;
+		user.save();
+
+		//send activation code
+		await account_activation_email(
+			{ name: user.name, otp: activationCode, link: activationLink },
+			user.email
+		);
+		res.cookie("verifyToken", verifyToken);
+		res.status(200).json({
+			message: "OTP code send email successfully",
+		});
+	}
+});
+
+
+/**
+ * Reset password
+ */
+export const resetPassword = asyncHandler(async (req, res) => {
+	const { password, token, otp } = req.body;
+
+	// check token
+	const checkToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+	if (isMobile(checkToken.auth)) {
+		const user = await User.findOne({ phone: auth });
+		if (!user) {
+			res.status(400).json({
+				message: "No user found",
+			});
+		}
+		
+		// update password 
+		user.password = await bcrypt.hash(password, 10);
+		user.accesstoken = null;
+		user.save();
+
+		res.clearCookie("verifyToken");
+		res.status(200).json({
+			message: "Password reset successfully",
+		});
+	} else if (isEmail(checkToken.auth)) {
+		const user = await User.findOne({
+			email: checkToken.auth,
+			accesstoken: otp,
+		});
+
+		if (!user) {
+			res.status(400).json({
+				message: "No user found",
+			});
+		}
+
+		user.password = await bcrypt.hash(password, 10);
+		user.accesstoken = null;
+		user.save();
+
+		res.clearCookie("verifyToken");
+
+		res.status(200).json({
+			message: "Password reset successfully",
 		});
 	}
 });

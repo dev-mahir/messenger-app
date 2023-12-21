@@ -3,10 +3,12 @@ import {
 	ativateAccountByOtp,
 	ativateAccountByURL,
 	createUser,
+	forgotPassword,
 	getLoggedInUser,
 	loginUser,
 	logoutUser,
 	resendActivation,
+	resetPassword,
 } from "./authApiSlice";
 
 // create auth slice
@@ -35,7 +37,7 @@ const authSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			// Create user ===============
+			// ===========  Create user ===============
 			.addCase(createUser.pending, (state) => {
 				state.loader = true;
 			})
@@ -47,7 +49,7 @@ const authSlice = createSlice({
 				state.loader = false;
 				state.message = action.payload.message;
 			})
-			// Activate account by OTP ==========
+			// ===========  Activate account by OTP ==========
 			.addCase(ativateAccountByOtp.pending, (state) => {
 				state.loader = true;
 			})
@@ -58,8 +60,9 @@ const authSlice = createSlice({
 			.addCase(ativateAccountByOtp.fulfilled, (state, action) => {
 				state.loader = false;
 				state.message = action.payload.message;
+				state.user = action.payload.user;
 			})
-			// Activate account by OTP ==========
+			// ===========  Activate account by OTP ==========
 			.addCase(ativateAccountByURL.pending, (state) => {
 				state.loader = true;
 			})
@@ -71,7 +74,7 @@ const authSlice = createSlice({
 				state.loader = false;
 				state.message = action.payload.message;
 			})
-			//login
+			// =========== login ===========
 			.addCase(loginUser.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
@@ -83,7 +86,7 @@ const authSlice = createSlice({
 					JSON.stringify(action.payload.user)
 				);
 			})
-			//logout
+			// ===========  logout ===========
 			.addCase(logoutUser.rejected, (state, action) => {
 				state.error = action.error.message;
 			})
@@ -103,15 +106,45 @@ const authSlice = createSlice({
 			// =========== resend activation =================
 			.addCase(resendActivation.rejected, (state, action) => {
 				state.error = action.error.message;
+				state.loader = false;
+			})
+			.addCase(resendActivation.pending, (state, action) => {
+				state.loader = true;
 			})
 			.addCase(resendActivation.fulfilled, (state, action) => {
 				state.message = action.payload.message;
+				state.loader = false;
+			})
+			// =========== Reset password  =================
+			.addCase(forgotPassword.rejected, (state, action) => {
+				state.error = action.error.message;
+				state.loader = false;
+			})
+			.addCase(forgotPassword.pending, (state, action) => {
+				state.loader = true;
+			})
+			.addCase(forgotPassword.fulfilled, (state, action) => {
+				state.message = action.payload.message;
+				state.loader = false;
+			})
+			// =========== Change reset password  =================
+			.addCase(resetPassword.rejected, (state, action) => {
+				state.error = action.error.message;
+				state.loader = false;
+			})
+			.addCase(resetPassword.pending, (state, action) => {
+				state.loader = true;
+			})
+			.addCase(resetPassword.fulfilled, (state, action) => {
+				state.message = action.payload.message;
+				state.loader = false;
 			});
 	},
 });
 
 // selectors
 export const getAuthData = (state) => state.auth;
+
 // actions
 export const { setMessageEmpty, setLogout } = authSlice.actions;
 

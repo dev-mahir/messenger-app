@@ -13,7 +13,7 @@ function Register({ title }) {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const { message, error, loader } = useSelector(getAuthData);
-	const { input, handleInputChange, resetForm, setInput } = useFormFields({
+	const { input, handleInputChange, resetForm } = useFormFields({
 		name: "",
 		auth: "",
 		password: "",
@@ -29,8 +29,9 @@ function Register({ title }) {
 			createToast(message, "success");
 			dispatch(setMessageEmpty());
 			resetForm();
-			navigate('/activation')
+			navigate("/activation");
 		}
+
 		if (error) {
 			createToast(error);
 			dispatch(setMessageEmpty());
