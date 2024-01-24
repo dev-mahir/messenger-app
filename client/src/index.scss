@@ -2,7 +2,12 @@
 
 :root {
 	--messenger-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+
 	--messenger-gray: #f0f2f5;
+	--messenger-gray-dark: #f0f2f5;
+
+	--messenger-blue: #2061f3;
+	--messenger-blue-hover: #ebf5ff;
 
 }
 
@@ -15,6 +20,9 @@
 
 a {
 	text-decoration: none;
+}
+input{
+	border: none;
 }
 input:focus{
 	outline: none;

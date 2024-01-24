@@ -35,6 +35,10 @@ const userSchema = mongoose.Schema(
 			type: String,
 			default: null,
 		},
+		isVerified: {
+			type: Boolean,
+			default: false,
+		},
 		status: {
 			type: Boolean,
 			default: true,

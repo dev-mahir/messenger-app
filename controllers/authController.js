@@ -431,7 +431,6 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 	}
 });
 
-
 /**
  * Reset password
  */
@@ -441,43 +440,52 @@ export const resetPassword = asyncHandler(async (req, res) => {
 	// check token
 	const checkToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-	if (isMobile(checkToken.auth)) {
-		const user = await User.findOne({ phone: auth });
-		if (!user) {
-			res.status(400).json({
-				message: "No user found",
+	// check otp
+
+	const user = await User.findOne({ accesstoken: otp });
+	if (!user) {
+		res.status(400).json({
+			message: "OTP not match",
+		});
+	} else {
+		if (isMobile(checkToken.auth)) {
+			const user = await User.findOne({ phone: auth });
+			if (!user) {
+				res.status(400).json({
+					message: "No user found",
+				});
+			}
+
+			// update password
+			user.password = await bcrypt.hash(password, 10);
+			user.accesstoken = null;
+			user.save();
+
+			res.clearCookie("verifyToken");
+			res.status(200).json({
+				message: "Password reset successfully",
+			});
+		} else if (isEmail(checkToken.auth)) {
+			const user = await User.findOne({
+				email: checkToken.auth,
+				accesstoken: otp,
+			});
+
+			if (!user) {
+				res.status(400).json({
+					message: "No user found",
+				});
+			}
+
+			user.password = await bcrypt.hash(password, 10);
+			user.accesstoken = null;
+			user.save();
+
+			res.clearCookie("verifyToken");
+
+			res.status(200).json({
+				message: "Password reset successfully",
 			});
 		}
-		
-		// update password 
-		user.password = await bcrypt.hash(password, 10);
-		user.accesstoken = null;
-		user.save();
-
-		res.clearCookie("verifyToken");
-		res.status(200).json({
-			message: "Password reset successfully",
-		});
-	} else if (isEmail(checkToken.auth)) {
-		const user = await User.findOne({
-			email: checkToken.auth,
-			accesstoken: otp,
-		});
-
-		if (!user) {
-			res.status(400).json({
-				message: "No user found",
-			});
-		}
-
-		user.password = await bcrypt.hash(password, 10);
-		user.accesstoken = null;
-		user.save();
-
-		res.clearCookie("verifyToken");
-
-		res.status(200).json({
-			message: "Password reset successfully",
-		});
 	}
 });

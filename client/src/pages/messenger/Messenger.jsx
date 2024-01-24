@@ -5,23 +5,15 @@ import useAuthUser from "../../hooks/useAuthUser";
 import { useNavigate } from "react-router-dom";
 import { getAuthData } from "../../features/auth/authSlice";
 import { useSelector } from "react-redux";
+import MessengerMain from "../../components/MessengerMain/MessengerMain";
 
 function Messenger() {
-	
 	const { user } = useSelector(getAuthData);
-
-
 
 	return (
 		<>
 			<Topbar />
-			{user.accesstoken ? (
-				<Activate />
-			) : (
-				<div>
-					<h1>Main content</h1>
-				</div>
-			)}
+			{user.isverified ? <Activate /> : <MessengerMain />}
 		</>
 	);
 }

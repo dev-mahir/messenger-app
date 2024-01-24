@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 function ResetPassword() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const { message, error } = useSelector(getAuthData);
+	const { message, error, loader } = useSelector(getAuthData);
 
 	const token = Cookies.get("verifyToken");
 
@@ -26,7 +26,9 @@ function ResetPassword() {
 	// handle reset password
 	const handleReset = (e) => {
 		e.preventDefault();
-		dispatch(resetPassword({ password: input.password, token, otp: input.otp }));
+		dispatch(
+			resetPassword({ password: input.password, token, otp: input.otp })
+		);
 	};
 
 	useEffect(() => {
@@ -34,7 +36,7 @@ function ResetPassword() {
 			createToast(message, "success");
 			dispatch(setMessageEmpty());
 			resetForm();
-			navigate("/reset-password");
+			navigate("/login");
 		}
 		if (error) {
 			createToast(error);
@@ -77,8 +79,13 @@ function ResetPassword() {
 									placeholder="Confirm password"
 								/>
 
-								<button className="bg-fb" type="submit">
-									Reset your password
+								<button
+									className="bg-fb"
+									type="submit"
+									disabled={loader ? true : false}>
+									{loader
+										? "Reseting..."
+										: "Reset your password"}
 								</button>
 							</form>
 						</div>
