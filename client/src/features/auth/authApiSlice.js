@@ -147,7 +147,6 @@ export const forgotPassword = createAsyncThunk(
 	}
 );
 
-
 // Reset password
 export const resetPassword = createAsyncThunk(
 	"auth/resetPassword",
@@ -156,6 +155,27 @@ export const resetPassword = createAsyncThunk(
 			const response = await axios.post(
 				`http://localhost:5050/api/v1/auth/reset-password`,
 				data,
+				{
+					withCredentials: true,
+				}
+			);
+			return response.data;
+		} catch (error) {
+			throw new Error(error.response.data.message);
+		}
+	}
+);
+
+
+// Upload user profile photo
+export const uploadUserPhoto = createAsyncThunk(
+	"auth/uploaderUserPhoto",
+	async (data) => {
+		
+		try {
+			const response = await axios.post(
+				`http://localhost:5050/api/v1/auth/profile-photo-upload/${data.id}`,
+				data.photo,
 				{
 					withCredentials: true,
 				}

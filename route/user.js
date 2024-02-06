@@ -13,8 +13,9 @@ const router = express.Router();
 // use verify token
 router.use(tokenVerify);
 
-// create route
 
+
+// create route
 router.route("/").get(getAllUser).post(createUser);
 router.route("/:id").get(getSingleUser).delete(deleteUser).put(updateUser);
 

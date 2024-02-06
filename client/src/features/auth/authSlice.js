@@ -9,6 +9,7 @@ import {
 	logoutUser,
 	resendActivation,
 	resetPassword,
+	uploadUserPhoto,
 } from "./authApiSlice";
 
 // create auth slice
@@ -138,6 +139,18 @@ const authSlice = createSlice({
 			.addCase(resetPassword.fulfilled, (state, action) => {
 				state.message = action.payload.message;
 				state.loader = false;
+			})
+			.addCase(uploadUserPhoto.pending, (state, action) => {
+				state.loader = true;
+			})
+			.addCase(uploadUserPhoto.rejected, (state, action) => {
+				state.loader = false;
+				state.error = action.error.message;
+			})
+			.addCase(uploadUserPhoto.fulfilled, (state, action) => {
+				state.loader = false;
+				state.user = action.payload;
+				state.message = action.message;
 			});
 	},
 });

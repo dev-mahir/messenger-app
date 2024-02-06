@@ -1,273 +1,25 @@
 import React from "react";
 import "./MessengerMain.scss";
-import { BsThreeDots } from "react-icons/bs";
-import { BiSolidEdit } from "react-icons/bi";
-import { CiSearch } from "react-icons/ci";
+
 
 import avater from "../../assets/images/logo.png";
-import { FaVideo } from "react-icons/fa";
+import { FaUser, FaVideo } from "react-icons/fa";
 import { IoIosCall } from "react-icons/io";
 import { MdInfo } from "react-icons/md";
+import Collapsible from "react-collapsible";
+import EmojiPicker from "emoji-picker-react";
+import useDropdownPopupControl from "../../hooks/useDropdownPopupControl";
+import DownArrow from "../../svgs/DownArrow";
+import Users from "../Users/Users";
 
 const MessengerMain = () => {
+	const { isOpen, toggleMenu } = useDropdownPopupControl();
+
 	return (
 		<>
 			<div className="chat-container">
-				<div className="chat-users">
-					<div className="chat-users-header">
-						<div className="chat-users-header-top">
-							<h2>Chats</h2>
-							<div className="btns">
-								<button>
-									<BsThreeDots />
-								</button>
-								<button>
-									<BiSolidEdit />
-								</button>
-							</div>
-						</div>
-						<div className="chat-users-header-search">
-							<div className="search">
-								<input type="text" />
-								<button>
-									<CiSearch />
-								</button>
-							</div>
-						</div>
-						<div className="chat-users-header-menu">
-							<button className="active">Inbox</button>
-							<button>Communities</button>
-						</div>
-					</div>
-
-					<div className="chat-users-list">
-						<div className="user-item active">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">1h</span>
-								</div>
-							</div>
-						</div>
-
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-						<div className="user-item">
-							<img src={avater} alt="" />
-							<div className="user-details">
-								<span className="user-name">Md Mahir</span>
-								<div>
-									<span className="user-chat-info">
-										<span className="chat-sort">
-											tumi asle , ami jabo
-										</span>
-									</span>
-									<span className="chat-time">10:05 am</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			
+				<Users/>
 
 				<div className="chat-body">
 					<div className="chat-body-active-user">
@@ -432,23 +184,108 @@ const MessengerMain = () => {
 					<div className="chat-body-form">
 						<div className="chat-form-icons">
 							<button>
-								<IoIosCall />
+								<FaVideo />
 							</button>
 							<button>
-								<IoIosCall />
+								<FaVideo />
 							</button>
 							<button>
-								<IoIosCall />
+								<FaVideo />
 							</button>
 							<button>
-								<IoIosCall />
+								<FaVideo />
 							</button>
 						</div>
-						<div className="chat-form-input"></div>
+						<div className="chat-form-input">
+							<input type="text" />
+							{isOpen && (
+								<div className="chat-emoji-picker">
+									<EmojiPicker />
+								</div>
+							)}
+
+							<div
+								className="chat-emoji-btn"
+								onClick={() => toggleMenu()}>
+								😜
+							</div>
+						</div>
+						<div className="chat-emoji">👍</div>
 					</div>
 				</div>
 
-				<div className="chat-profile">profile</div>
+				<div className="chat-profile">
+					<div className="profile-info">
+						<img width={40} src={avater} alt="" />
+						<span className="chat-user-name">Md Mahir</span>
+						<div>
+							<ul>
+								<li>
+									<button>
+										<FaUser />
+									</button>
+									<span>profile</span>
+								</li>
+								<li>
+									<button>
+										<FaUser />
+									</button>
+									<span>Mute</span>
+								</li>
+								<li>
+									<button>
+										<FaUser />
+									</button>
+									<span>Search</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div className="profile-options">
+						
+						<Collapsible
+							trigger="Chat info">
+							<p>
+								This is the collapsible content. It can be any
+								element or React component you like.
+							</p>
+							<p>
+								It can even be another Collapsible component.
+								Check out the next section!
+							</p>
+						</Collapsible>
+						<Collapsible trigger="Customize chat">
+							<p>
+								This is the collapsible content. It can be any
+								element or React component you like.
+							</p>
+							<p>
+								It can even be another Collapsible component.
+								Check out the next section!
+							</p>
+						</Collapsible>
+						<Collapsible trigger="Media files and links">
+							<p>
+								This is the collapsible content. It can be any
+								element or React component you like.
+							</p>
+							<p>
+								It can even be another Collapsible component.
+								Check out the next section!
+							</p>
+						</Collapsible>
+						<Collapsible trigger="Privacy and Support">
+							<p>
+								This is the collapsible content. It can be any
+								element or React component you like.
+							</p>
+							<p>
+								It can even be another Collapsible component.
+								Check out the next section!
+							</p>
+						</Collapsible>
+					</div>
+				</div>
 			</div>
 		</>
 	);

@@ -10,6 +10,7 @@ import useAuthUser from "../../hooks/useAuthUser";
 import { logoutUser } from "../../features/auth/authApiSlice";
 import { useDispatch } from "react-redux";
 import Activate from "../Activate";
+import { Avatar } from "@chakra-ui/avatar";
 
 const Topbar = () => {
 	const { user } = useAuthUser();
@@ -65,14 +66,21 @@ const Topbar = () => {
 					</div>
 					<div className="topbar-user" ref={dropDownRefWrapper}>
 						<button onClick={toggleMenu}>
-							<img
-								src={
-									user?.photo
-										? user?.photo
-										: "https://cdn.iconscout.com/icon/free/png-256/free-avatar-370-456322.png?f=webp"
-								}
-								alt=""
-							/>
+							{user?.photo ? (
+								<img src={user?.photo} alt="" />
+							) : (
+								<Avatar
+									style={{
+										height: "40px",
+										width: "40px",
+										border: "1px solid #ccc",
+										borderRadius: "50%",
+										backgroundColor: "#ccc",
+									}}
+									src={user.photo}
+									name={user.name}
+								/>
+							)}
 						</button>
 						{isOpen && (
 							<div className="dropdown-menu">
@@ -90,7 +98,7 @@ const Topbar = () => {
 										</Link>
 									</li>
 									<li>
-										<Link to="">
+										<Link to="/profile-edit">
 											<FaRegUser /> Edit profile
 										</Link>
 									</li>
@@ -106,7 +114,6 @@ const Topbar = () => {
 					</div>
 				</div>
 			</div>
-
 		</>
 	);
 };

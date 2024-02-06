@@ -12,6 +12,7 @@ import {
 } from "../helpers/helpers.js";
 import { sendSMS } from "../utils/sendSMS.js";
 import { account_activation_email } from "../mails/account_activation_email.js";
+import { cloudUpload } from "../utils/cloudinary.js";
 
 /**
  * @DESC User Login
@@ -488,4 +489,27 @@ export const resetPassword = asyncHandler(async (req, res) => {
 			});
 		}
 	}
+});
+
+/**
+ * upload profile photo
+ */
+export const uploadProfilePhoto = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+
+	const file = await cloudUpload(req);
+
+	
+	// find user and update profile photo
+	const user = await User.findByIdAndUpdate(
+		{_id:id},
+		{ photo: file.secure_url },
+		{ new: true }
+	);
+
+	res.status(200).json({
+		message: "Profile photo  updated",
+		user,
+	});
+
 });

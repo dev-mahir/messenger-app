@@ -8,13 +8,24 @@ import User from "../models/User.js";
  * @method GET
  * @access public
  */
-export const getAllUser = asyncHandler(async (req, res) => {
-  const users = await User.find().populate("role");
 
-  if (users.length > 0) {
-    res.status(200).json(users);
-  }
+export const getAllUser = asyncHandler(async (req, res) => {
+	const users = await User.find({
+		isVerified: true,
+	}).select("-password");
+  console.log(users);
+
+	if (users.length > 0) {
+		res.status(200).json({
+			users
+		});
+	} else {
+		res.status(404).json({
+			message: "User not found",
+		});
+	}
 });
+
 
 /**
  * @DESC Get Single users data
@@ -23,15 +34,15 @@ export const getAllUser = asyncHandler(async (req, res) => {
  * @access public
  */
 export const getSingleUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+	const { id } = req.params;
 
-  const user = await User.findById(id);
+	const user = await User.findById(id);
 
-  if (!user) {
-    return res.status(404).json({ message: "User data not found" });
-  }
+	if (!user) {
+		return res.status(404).json({ message: "User data not found" });
+	}
 
-  res.status(200).json(user);
+	res.status(200).json(user);
 });
 
 /**
@@ -41,38 +52,38 @@ export const getSingleUser = asyncHandler(async (req, res) => {
  * @access public
  */
 export const createUser = asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+	const { name, email, password, role } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
+	if (!name || !email || !password) {
+		return res.status(400).json({ message: "All fields are required" });
+	}
 
-  // check user email
-  const userEmailCheck = await User.findOne({ email });
+	// check user email
+	const userEmailCheck = await User.findOne({ email });
 
-  if (userEmailCheck) {
-    return res.status(400).json({ message: "Email already exists" });
-  }
+	if (userEmailCheck) {
+		return res.status(400).json({ message: "Email already exists" });
+	}
 
-  // password hash
-  const hashPass = await bcrypt.hash(password, 10);
+	// password hash
+	const hashPass = await bcrypt.hash(password, 10);
 
-  // create new user
-  const user = await User.create({
-    name,
-    email,
-    password: hashPass,
-    role,
-  });
+	// create new user
+	const user = await User.create({
+		name,
+		email,
+		password: hashPass,
+		role,
+	});
 
-  // send user access to email
-  sendMail({
-    to: email,
-    sub: "Account Access Info",
-    msg: `Your account login access is email : ${email} & password : ${password}`,
-  });
+	// send user access to email
+	sendMail({
+		to: email,
+		sub: "Account Access Info",
+		msg: `Your account login access is email : ${email} & password : ${password}`,
+	});
 
-  res.status(200).json({ user, message: `${name} user created successful` });
+	res.status(200).json({ user, message: `${name} user created successful` });
 });
 
 /**
@@ -82,11 +93,11 @@ export const createUser = asyncHandler(async (req, res) => {
  * @access public
  */
 export const deleteUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+	const { id } = req.params;
 
-  const user = await User.findByIdAndDelete(id);
+	const user = await User.findByIdAndDelete(id);
 
-  res.status(200).json(user);
+	res.status(200).json(user);
 });
 
 /**
@@ -96,25 +107,25 @@ export const deleteUser = asyncHandler(async (req, res) => {
  * @access public
  */
 export const updateUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+	const { id } = req.params;
 
-  const { name, email, mobile, password, gender } = req.body;
+	const { name, email, mobile, password, gender } = req.body;
 
-  if (!name || !email || !mobile || !password || !gender) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
+	if (!name || !email || !mobile || !password || !gender) {
+		return res.status(400).json({ message: "All fields are required" });
+	}
 
-  const user = await User.findByIdAndUpdate(
-    id,
-    {
-      name,
-      email,
-      mobile,
-      password,
-      gender,
-    },
-    { new: true }
-  );
+	const user = await User.findByIdAndUpdate(
+		id,
+		{
+			name,
+			email,
+			mobile,
+			password,
+			gender,
+		},
+		{ new: true }
+	);
 
-  res.status(200).json(user);
+	res.status(200).json(user);
 });

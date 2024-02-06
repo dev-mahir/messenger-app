@@ -1,4 +1,5 @@
 import ActivationAfterLogin from "../pages/auth/ActivationAfterLogin";
+import Profile from "../pages/auth/Profile";
 import Messenger from "../pages/messenger/Messenger";
 import PrivateGard from "./PrivateGard";
 
@@ -15,6 +16,11 @@ const privateRouter = [
 				path: "/activate-after-login",
 				element: <ActivationAfterLogin />,
 			},
+			{
+				path: "/profile-edit",
+				element: <Profile />,
+			},
+
 		],
 	},
 ];

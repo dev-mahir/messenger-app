@@ -96,6 +96,7 @@
 			}
 
 			.user-item {
+				align-items: center;
 				display: flex;
 				gap: 10px;
 				cursor: pointer;
@@ -104,9 +105,17 @@
 				&:hover {
 					background-color: var(--messenger-gray);
 				}
+				span.chakra-avatar.css-1ruhx4w {
+					height: 35px;
+					width: 35px;
+					border: 1px solid;
+					border-radius: 50%;
+				}
+				
 
 				img {
 					width: 35px;
+					height: 35px;
 					border-radius: 50%;
 					-webkit-border-radius: 50%;
 					-moz-border-radius: 50%;
@@ -139,7 +148,7 @@
 			justify-content: space-between;
 			align-items: center;
 			padding: 10px;
-			box-shadow: var(--messenger-shadow);
+			box-shadow: var(--shadow-2);
 			.chat-active-user-details {
 				display: flex;
 				align-items: center;
@@ -174,7 +183,7 @@
 		.chat-body-msg {
 			overflow: auto;
 			padding: 10px;
-			height: 70vh;
+			height: 74vh;
 			.chat-msg-profile {
 				display: flex;
 				flex-direction: column;
@@ -288,15 +297,111 @@
 		}
 
 		.chat-body-form {
+			padding: 10px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
 			.chat-form-icons {
-				button{}
+				display: flex;
+				gap: 8px;
+				flex-direction: row;
+				button {
+					border: none;
+					font-size: 18px;
+					cursor: pointer;
+					color: var(--messenger-blue);
+					background-color: transparent;
+				}
 			}
 			.chat-form-input {
+				flex: 3;
+				position: relative;
+				input {
+					width: 100%;
+					padding: 8px 5px;
+					padding-right: 40px;
+					text-overflow: clip;
+					border-radius: 20px;
+					background-color: var(--messenger-gray);
+					-webkit-border-radius: 20px;
+					-moz-border-radius: 20px;
+					-ms-border-radius: 20px;
+					-o-border-radius: 20px;
+				}
+				.chat-emoji-picker {
+					position: absolute;
+					bottom: 75px;
+					right: 0;
+				}
+				.chat-emoji-btn {
+					position: absolute;
+					top: 5px;
+					right: 10px;
+					cursor: pointer;
+				}
 			}
 		}
 	}
 
 	.chat-profile {
 		flex: 1;
+		padding: 10px;
+
+		.profile-info {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			ul {
+				display: flex;
+				gap: 10px;
+				margin-top: 15px;
+				li {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					button {
+						background-color: var(--messenger-gray);
+						color: #000;
+						border: none;
+						width: 35px;
+						height: 35px;
+						border-radius: 50%;
+						-webkit-border-radius: 50%;
+						-moz-border-radius: 50%;
+						-ms-border-radius: 50%;
+						-o-border-radius: 50%;
+					}
+
+					span {
+						font-weight: 500;
+						font-size: 14px;
+					}
+				}
+			}
+		}
+
+		.profile-options {
+			margin-top: 10px;
+			.Collapsible {
+				span {
+					font-weight: 500;
+					font-size: 13px;
+					display: block;
+					padding: 5px;
+					cursor: pointer;
+					border-radius: 5px;
+					&:hover {
+						background-color: var(--messenger-gray);
+					}
+				}
+				.Collapsible__contentInner {
+					p {
+						font-size: 13px;
+						margin-top: 5px;
+					}
+				}
+			}
+		}
 	}
 }

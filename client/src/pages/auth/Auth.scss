@@ -19,7 +19,54 @@
 			gap: 20px;
 
 			img {
-				width: 60px;
+				width: 100%;
+			}
+			.profile-photo-wrap {
+				position: relative;
+				height: 200px;
+				width: 200px;
+				overflow: hidden;
+				background-color: #ccc;
+				border-radius: 50%;
+				-webkit-border-radius: 50%;
+				-moz-border-radius: 50%;
+				-ms-border-radius: 50%;
+				-o-border-radius: 50%;
+				font-size: 100px;
+				transition: 0.2s;
+
+				&:hover {
+					.profile-photo-upload {
+						transition: 0.2s;
+						bottom: 1px;
+						visibility: visible;
+						opacity: 1;
+					}
+				}
+
+				span {
+					display: block;
+					height: inherit;
+					width: inherit;
+				}
+				.profile-photo-upload {
+					height: 40px;
+					width: 191px;
+					font-size: 14px;
+					display: block;
+					background-color: #464343;
+					line-height: 40px;
+					cursor: pointer;
+					position: absolute;
+					color: #fff;
+					transition: 0.2s;
+					opacity: 0;
+					visibility: hidden;
+
+					input {
+						display: none;
+					}
+				}
 			}
 			h1 {
 				text-align: center;
