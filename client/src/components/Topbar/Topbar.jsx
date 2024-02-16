@@ -30,7 +30,7 @@ const Topbar = () => {
 				<div className="top-bar-container">
 					<div className="topbar-search">
 						<Link to="/">
-							<img
+							<img 
 								src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1024px-Facebook_Logo_%282019%29.png"
 								alt=""
 							/>

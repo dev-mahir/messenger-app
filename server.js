@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRouter from "./route/auth.js";
 import userRouter from "./route/user.js";
+import chatRouter from "./route/chat.js";
 import { errorHandler } from "./middlewares/errorhandler.js";
 import { mongoBDConnect } from "./config/db.js";
 
@@ -31,6 +32,7 @@ app.use(express.static("public"));
 // routing
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/chat", chatRouter);
 
 // use error handler
 app.use(errorHandler);

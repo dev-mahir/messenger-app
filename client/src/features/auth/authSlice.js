@@ -148,9 +148,9 @@ const authSlice = createSlice({
 				state.error = action.error.message;
 			})
 			.addCase(uploadUserPhoto.fulfilled, (state, action) => {
-				state.loader = false;
-				state.user = action.payload;
 				state.message = action.message;
+				state.user = action.payload;
+				state.loader = false;
 			});
 	},
 });

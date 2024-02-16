@@ -8,16 +8,15 @@ import User from "../models/User.js";
  * @method GET
  * @access public
  */
-
 export const getAllUser = asyncHandler(async (req, res) => {
+	
 	const users = await User.find({
-		isVerified: true,
+		$and: [{ isVerified: true }, { _id: { $ne: req.me._id } }],
 	}).select("-password");
-  console.log(users);
 
 	if (users.length > 0) {
 		res.status(200).json({
-			users
+			users,
 		});
 	} else {
 		res.status(404).json({
@@ -25,7 +24,6 @@ export const getAllUser = asyncHandler(async (req, res) => {
 		});
 	}
 });
-
 
 /**
  * @DESC Get Single users data

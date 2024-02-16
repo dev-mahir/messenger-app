@@ -23,7 +23,6 @@ function Profile() {
 
 
 
-
 	return (
 		<>
 			<Topbar />
@@ -32,7 +31,7 @@ function Profile() {
 					<div className="auth-top">
 						<div className="profile-photo-wrap">
 							{ loader && "Loading..."}
-							<Avatar src={user.photo} name={user.name} />
+							<Avatar src={user?.photo} name={user?.name} />
 							<label className="profile-photo-upload">
 								Upload photo
 								<input

@@ -2,25 +2,17 @@ import React, { useEffect } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import { BiSolidEdit } from "react-icons/bi";
 import { CiSearch } from "react-icons/ci";
-import avater from "../../assets/images/logo.png";
 import { useDispatch, useSelector } from "react-redux";
-import { getUsers } from "../../features/user/userSlice";
 import { getAllUser } from "../../features/user/userApiSlice";
-import { Avatar, AvatarGroup } from "@chakra-ui/avatar";
+import { Avatar } from "@chakra-ui/avatar";
 
-const Users = () => {
+const Users = ({ setActiveChat, activeChat }) => {
 	const { users, error, message } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
-
-
-
-    
-
 
 	useEffect(() => {
 		dispatch(getAllUser());
 	}, []);
-
 
 	return (
 		<div className="chat-users">
@@ -50,15 +42,18 @@ const Users = () => {
 				</div>
 			</div>
 
-			
-
 			<div className="chat-users-list">
 				{users &&
-					users.map((user, index) => (
-						<div className="user-item active" key={index}>
-							<Avatar src={user.photo} name={user.name} />
+					users.map((item, index) => (
+						<div
+							className={ `user-item  ${item._id === activeChat?._id  ? "active" : "" }`}
+							key={index}
+							onClick={() => setActiveChat(item)}>
+							
+							<Avatar src={item.photo} name={item.name} />
+
 							<div className="user-details">
-								<span className="user-name">{user.name}</span>
+								<span className="user-name">{item.name}</span>
 								<div>
 									<span className="user-chat-info">
 										<span className="chat-sort">
